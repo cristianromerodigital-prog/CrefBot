@@ -419,6 +419,8 @@ function gateStepPrivacy() {
   }
   document.getElementById('gate-err-privacy').classList.remove('show');
   document.getElementById('gateOverlay').classList.add('hidden');
+  // Guardar en localStorage para no pedir login de nuevo
+  localStorage.setItem('crefbot-user', JSON.stringify(currentUser));
   // Save lead
   saveLeadToStorage({ name: currentUser.name, level: currentUser.level, ts: new Date().toISOString() });
   // Init chat
@@ -831,6 +833,18 @@ async function clearLeads() {
 
 // ── INIT ─────────────────────────────────────────────────
 renderTopics();
+
+// Verificar si el usuario ya se registró antes (al cargar la página)
+try {
+  const saved = localStorage.getItem('crefbot-user');
+  if (saved) {
+    currentUser = JSON.parse(saved);
+    document.getElementById('gateOverlay').classList.add('hidden');
+    initChat();
+  }
+} catch(e) {
+  localStorage.removeItem('crefbot-user');
+}
 </script>
 </body>
 </html>
